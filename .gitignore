@@ -71,3 +71,9 @@ coverage.xml
 # Docker
 .dockerignore
 docker-compose.override.yml
+
+# Ignore all general build folders...
+build/
+
+# ...but DO NOT ignore this specific Sphinx HTML output
+!docs/_build/html/
