@@ -119,7 +119,7 @@ else:
             "ENGINE": "django.db.backends.mysql",
             "NAME": os.environ.get("DB_NAME", "news_db"),
             "USER": os.environ.get("DB_USER", "root"),
-            "PASSWORD": os.environ.get("DB_PASSWORD", "mole@2018"),
+            "PASSWORD": os.environ.get("DB_PASSWORD", "yourpassword"),
             "HOST": os.environ.get("DB_HOST", "localhost"),
             "PORT": os.environ.get("DB_PORT", "3306"),
             "OPTIONS": {
