@@ -3,19 +3,20 @@ version: "3.9"
 services:
   web:
     build:
-      context: .
+      context: .            # Builds from current dir: repo/news_portal
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
     volumes:
-      - .:/app
+      - .:/app              # Mounts repo/news_portal into /app
     environment:
-      - IN_DOCKER=1                # Enable SQLite mode inside container by default
+      - IN_DOCKER=0
       - DB_NAME=news_db
       - DB_USER=root
       - DB_PASSWORD=mole@2018
       - DB_HOST=db
       - DB_PORT=3306
+    working_dir: /app       # Ensures Python runs in /app where manage.py is
     command: >
       sh -c "
       python manage.py migrate &&
