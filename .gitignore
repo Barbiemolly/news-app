@@ -68,6 +68,13 @@ coverage.xml
 # Jupyter
 .ipynb_checkpoints/
 
+<<<<<<< HEAD
+=======
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+>>>>>>> docs
 # Ignore all general build folders...
 build/
 

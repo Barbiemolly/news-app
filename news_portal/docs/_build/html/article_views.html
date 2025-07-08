@@ -1,0 +1,281 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Article Views &mdash; News portal 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Newsletter Views" href="newsletter_views.html" />
+    <link rel="prev" title="Article Serializer" href="article_serializer.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            News portal
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="core.models.html">core.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="article_serializer.html">Article Serializer</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Article Views</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#core.views.article.create_article"><code class="docutils literal notranslate"><span class="pre">create_article()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core.views.article.edit_article"><code class="docutils literal notranslate"><span class="pre">edit_article()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core.views.article.approve_article"><code class="docutils literal notranslate"><span class="pre">approve_article()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core.views.article.reject_article"><code class="docutils literal notranslate"><span class="pre">reject_article()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core.views.article.article_list"><code class="docutils literal notranslate"><span class="pre">article_list()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core.views.article.article_detail"><code class="docutils literal notranslate"><span class="pre">article_detail()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core.views.article.search_articles"><code class="docutils literal notranslate"><span class="pre">search_articles()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core.views.article.trending_articles"><code class="docutils literal notranslate"><span class="pre">trending_articles()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core.views.article.delete_article"><code class="docutils literal notranslate"><span class="pre">delete_article()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="newsletter_views.html">Newsletter Views</a></li>
+<li class="toctree-l1"><a class="reference internal" href="moderation_views.html">Moderation Views</a></li>
+<li class="toctree-l1"><a class="reference internal" href="publisher_dashboard_views.html">Publisher Dashboard Views</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">News portal</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Article Views</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/article_views.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-core.views.article">
+<span id="article-views"></span><h1>Article Views<a class="headerlink" href="#module-core.views.article" title="Link to this heading"></a></h1>
+<p>Views for managing article-related operations in the news portal.</p>
+<p>Includes article creation, editing, approval, rejection, searching,
+listing, detail views, trending articles, and soft deletion.</p>
+<p>All views enforce role-based access control.</p>
+<dl class="simple">
+<dt>Functions:</dt><dd><ul class="simple">
+<li><p>create_article: Journalist submits a new article.</p></li>
+<li><p>edit_article: Journalist edits and resubmits a rejected article.</p></li>
+<li><p>approve_article: Editor approves a submitted article.</p></li>
+<li><p>reject_article: Editor rejects a submitted article with reason.</p></li>
+<li><p>article_list: Lists articles based on user role.</p></li>
+<li><p>article_detail: Displays article content with access control.</p></li>
+<li><p>search_articles: Search for articles by title, content, or tags.</p></li>
+<li><p>trending_articles: Displays top 5 most viewed articles.</p></li>
+<li><p>delete_article: Soft-deletes an article (editor or author).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="core.views.article.create_article">
+<span class="sig-prename descclassname"><span class="pre">core.views.article.</span></span><span class="sig-name descname"><span class="pre">create_article</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/views/article.html#create_article"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.article.create_article" title="Link to this definition"></a></dt>
+<dd><p>Allows a journalist to create and submit a new article.</p>
+<dl class="simple">
+<dt>Access:</dt><dd><ul class="simple">
+<li><p>Only users with role ‘journalist’.</p></li>
+</ul>
+</dd>
+<dt>Template:</dt><dd><ul class="simple">
+<li><p>articles/create.html</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.views.article.edit_article">
+<span class="sig-prename descclassname"><span class="pre">core.views.article.</span></span><span class="sig-name descname"><span class="pre">edit_article</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pk</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/views/article.html#edit_article"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.article.edit_article" title="Link to this definition"></a></dt>
+<dd><p>Allows journalists to edit and resubmit a rejected article.</p>
+<dl class="simple">
+<dt>Access:</dt><dd><ul class="simple">
+<li><p>Only authors of the rejected article.</p></li>
+</ul>
+</dd>
+<dt>Template:</dt><dd><ul class="simple">
+<li><p>articles/edit.html</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.views.article.approve_article">
+<span class="sig-prename descclassname"><span class="pre">core.views.article.</span></span><span class="sig-name descname"><span class="pre">approve_article</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pk</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/views/article.html#approve_article"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.article.approve_article" title="Link to this definition"></a></dt>
+<dd><p>Allows editors to approve a submitted article.</p>
+<dl class="simple">
+<dt>Access:</dt><dd><ul class="simple">
+<li><p>Only users with role ‘editor’.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.views.article.reject_article">
+<span class="sig-prename descclassname"><span class="pre">core.views.article.</span></span><span class="sig-name descname"><span class="pre">reject_article</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pk</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/views/article.html#reject_article"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.article.reject_article" title="Link to this definition"></a></dt>
+<dd><p>Allows editors to reject a submitted article with a reason.</p>
+<dl class="simple">
+<dt>Access:</dt><dd><ul class="simple">
+<li><p>Only users with role ‘editor’.</p></li>
+</ul>
+</dd>
+<dt>Template:</dt><dd><ul class="simple">
+<li><p>editor/reject.html</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.views.article.article_list">
+<span class="sig-prename descclassname"><span class="pre">core.views.article.</span></span><span class="sig-name descname"><span class="pre">article_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/views/article.html#article_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.article.article_list" title="Link to this definition"></a></dt>
+<dd><p>Lists articles based on user’s role:</p>
+<ul class="simple">
+<li><p>Reader: sees approved articles.</p></li>
+<li><p>Journalist: sees their own articles.</p></li>
+<li><p>Editor: sees all articles.</p></li>
+</ul>
+<dl class="simple">
+<dt>Template:</dt><dd><ul class="simple">
+<li><p>articles/list.html</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.views.article.article_detail">
+<span class="sig-prename descclassname"><span class="pre">core.views.article.</span></span><span class="sig-name descname"><span class="pre">article_detail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pk</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/views/article.html#article_detail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.article.article_detail" title="Link to this definition"></a></dt>
+<dd><p>Displays the full content of an article with access restrictions.</p>
+<dl class="simple">
+<dt>Access Rules:</dt><dd><ul class="simple">
+<li><p>Reader: only approved articles.</p></li>
+<li><p>Journalist: only own articles.</p></li>
+<li><p>Editor: all articles.</p></li>
+</ul>
+</dd>
+<dt>Template:</dt><dd><ul class="simple">
+<li><p>articles/detail.html</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.views.article.search_articles">
+<span class="sig-prename descclassname"><span class="pre">core.views.article.</span></span><span class="sig-name descname"><span class="pre">search_articles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/views/article.html#search_articles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.article.search_articles" title="Link to this definition"></a></dt>
+<dd><p>Allows users to search for articles using title, content, or tags.</p>
+<p>Also displays the top 5 most-used tags for suggestions.</p>
+<dl class="simple">
+<dt>Template:</dt><dd><ul class="simple">
+<li><p>articles/search_results.html</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.views.article.trending_articles">
+<span class="sig-prename descclassname"><span class="pre">core.views.article.</span></span><span class="sig-name descname"><span class="pre">trending_articles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/views/article.html#trending_articles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.article.trending_articles" title="Link to this definition"></a></dt>
+<dd><p>Displays the top 5 most-viewed articles.</p>
+<dl class="simple">
+<dt>Template:</dt><dd><ul class="simple">
+<li><p>articles/trending.html</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.views.article.delete_article">
+<span class="sig-prename descclassname"><span class="pre">core.views.article.</span></span><span class="sig-name descname"><span class="pre">delete_article</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pk</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/views/article.html#delete_article"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.article.delete_article" title="Link to this definition"></a></dt>
+<dd><p>Soft deletes an article.</p>
+<dl class="simple">
+<dt>Access:</dt><dd><ul class="simple">
+<li><p>Author of the article.</p></li>
+<li><p>Publisher’s owner.</p></li>
+<li><p>Publisher’s assigned editor.</p></li>
+</ul>
+</dd>
+<dt>Redirects:</dt><dd><ul class="simple">
+<li><p>Redirects to home after deletion or failure.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="article_serializer.html" class="btn btn-neutral float-left" title="Article Serializer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="newsletter_views.html" class="btn btn-neutral float-right" title="Newsletter Views" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Molemo N Khethwa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

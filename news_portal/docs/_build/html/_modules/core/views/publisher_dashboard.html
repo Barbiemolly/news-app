@@ -1,0 +1,307 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>core.views.publisher_dashboard &mdash; News portal 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            News portal
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../core.models.html">core.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../article_serializer.html">Article Serializer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../article_views.html">Article Views</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../newsletter_views.html">Newsletter Views</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../moderation_views.html">Moderation Views</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../publisher_dashboard_views.html">Publisher Dashboard Views</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">News portal</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">core.views.publisher_dashboard</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for core.views.publisher_dashboard</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Views for managing publishers, including creation, editing, deletion,</span>
+<span class="sd">and assigning editors and journalists to publishing houses.</span>
+
+<span class="sd">Access is restricted based on user roles, primarily the publisher (owner).</span>
+
+<span class="sd">Functions:</span>
+<span class="sd">    - manage_publisher_roles: Assigns editors and journalists to a publisher.</span>
+<span class="sd">    - create_publisher: Creates a new publisher with assigned roles.</span>
+<span class="sd">    - edit_publisher: Allows the publisher owner to update their profile.</span>
+<span class="sd">    - delete_publisher: Soft-deletes a publisher entity (owner only).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">login_required</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib</span><span class="w"> </span><span class="kn">import</span> <span class="n">messages</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.shortcuts</span><span class="w"> </span><span class="kn">import</span> <span class="n">render</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">get_object_or_404</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">core.models.publisher</span><span class="w"> </span><span class="kn">import</span> <span class="n">Publisher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">core.forms.publisher_management_form</span><span class="w"> </span><span class="kn">import</span> <span class="n">PublisherEditorForm</span><span class="p">,</span> <span class="n">PublisherJournalistForm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">core.forms.publisher_creation_form</span><span class="w"> </span><span class="kn">import</span> <span class="n">PublisherForm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">core.models.user</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">core.models.article</span><span class="w"> </span><span class="kn">import</span> <span class="n">Article</span>
+
+
+<div class="viewcode-block" id="manage_publisher_roles">
+<a class="viewcode-back" href="../../../publisher_dashboard_views.html#core.views.publisher_dashboard.manage_publisher_roles">[docs]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">manage_publisher_roles</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Allows a publisher to assign editors and journalists to their publishing house.</span>
+
+<span class="sd">    Access:</span>
+<span class="sd">        - Only the logged-in user who owns the publisher profile.</span>
+
+<span class="sd">    Template:</span>
+<span class="sd">        - publisher/manage_roles.html</span>
+
+<span class="sd">    Context:</span>
+<span class="sd">        - Forms for assigning editors and journalists.</span>
+<span class="sd">        - Lists of paired and unpaired users.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">publisher</span> <span class="o">=</span> <span class="n">Publisher</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">owner</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">Publisher</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;You don&#39;t have a publisher yet.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;create_publisher&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">editor_form</span> <span class="o">=</span> <span class="n">PublisherEditorForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">instance</span><span class="o">=</span><span class="n">publisher</span><span class="p">)</span>
+        <span class="n">journalist_form</span> <span class="o">=</span> <span class="n">PublisherJournalistForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">instance</span><span class="o">=</span><span class="n">publisher</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">editor_form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">()</span> <span class="ow">and</span> <span class="n">journalist_form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">publisher</span><span class="o">.</span><span class="n">editors</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">editor_form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s2">&quot;editors&quot;</span><span class="p">])</span>
+            <span class="n">publisher</span><span class="o">.</span><span class="n">journalists</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">journalist_form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s2">&quot;journalists&quot;</span><span class="p">])</span>
+            <span class="n">publisher</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Editors and journalists successfully paired.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;manage_publisher_roles&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">editor_form</span> <span class="o">=</span> <span class="n">PublisherEditorForm</span><span class="p">(</span><span class="n">instance</span><span class="o">=</span><span class="n">publisher</span><span class="p">)</span>
+        <span class="n">journalist_form</span> <span class="o">=</span> <span class="n">PublisherJournalistForm</span><span class="p">(</span><span class="n">instance</span><span class="o">=</span><span class="n">publisher</span><span class="p">)</span>
+
+    <span class="n">all_editors</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">role</span><span class="o">=</span><span class="s2">&quot;editor&quot;</span><span class="p">)</span>
+    <span class="n">all_journalists</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">role</span><span class="o">=</span><span class="s2">&quot;journalist&quot;</span><span class="p">)</span>
+
+    <span class="n">paired_editors</span> <span class="o">=</span> <span class="n">publisher</span><span class="o">.</span><span class="n">editors</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">paired_journalists</span> <span class="o">=</span> <span class="n">publisher</span><span class="o">.</span><span class="n">journalists</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    <span class="n">unpaired_editors</span> <span class="o">=</span> <span class="n">all_editors</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">id__in</span><span class="o">=</span><span class="n">paired_editors</span><span class="p">)</span>
+    <span class="n">unpaired_journalists</span> <span class="o">=</span> <span class="n">all_journalists</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">id__in</span><span class="o">=</span><span class="n">paired_journalists</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span>
+        <span class="s2">&quot;publisher/manage_roles.html&quot;</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;editor_form&quot;</span><span class="p">:</span> <span class="n">editor_form</span><span class="p">,</span>
+            <span class="s2">&quot;journalist_form&quot;</span><span class="p">:</span> <span class="n">journalist_form</span><span class="p">,</span>
+            <span class="s2">&quot;paired_editors&quot;</span><span class="p">:</span> <span class="n">paired_editors</span><span class="p">,</span>
+            <span class="s2">&quot;paired_journalists&quot;</span><span class="p">:</span> <span class="n">paired_journalists</span><span class="p">,</span>
+            <span class="s2">&quot;unpaired_editors&quot;</span><span class="p">:</span> <span class="n">unpaired_editors</span><span class="p">,</span>
+            <span class="s2">&quot;unpaired_journalists&quot;</span><span class="p">:</span> <span class="n">unpaired_journalists</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_publisher">
+<a class="viewcode-back" href="../../../publisher_dashboard_views.html#core.views.publisher_dashboard.create_publisher">[docs]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_publisher</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a new publisher profile and assigns initial editors and journalists.</span>
+
+<span class="sd">    Access:</span>
+<span class="sd">        - Logged-in users.</span>
+
+<span class="sd">    Template:</span>
+<span class="sd">        - publisher/create_manage.html</span>
+
+<span class="sd">    Context:</span>
+<span class="sd">        - PublisherForm for creation.</span>
+<span class="sd">        - All publishers for reference/admin view.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">PublisherForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">publisher</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">publisher</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="n">form</span><span class="o">.</span><span class="n">save_m2m</span><span class="p">()</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Publisher created and roles assigned successfully.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;home&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">PublisherForm</span><span class="p">()</span>
+
+    <span class="n">all_publishers</span> <span class="o">=</span> <span class="n">Publisher</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span><span class="s2">&quot;owner&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">prefetch_related</span><span class="p">(</span><span class="s2">&quot;editors&quot;</span><span class="p">,</span> <span class="s2">&quot;journalists&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span>
+        <span class="s2">&quot;publisher/create_manage.html&quot;</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;form&quot;</span><span class="p">:</span> <span class="n">form</span><span class="p">,</span>
+            <span class="s2">&quot;publishers&quot;</span><span class="p">:</span> <span class="n">all_publishers</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="edit_publisher">
+<a class="viewcode-back" href="../../../publisher_dashboard_views.html#core.views.publisher_dashboard.edit_publisher">[docs]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">edit_publisher</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">pk</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Allows a publisher owner to update their publishing house information.</span>
+
+<span class="sd">    Access:</span>
+<span class="sd">        - Only the owner of the publisher.</span>
+
+<span class="sd">    Template:</span>
+<span class="sd">        - publisher/edit_publisher.html</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pk (int): Primary key of the publisher to edit.</span>
+
+<span class="sd">    Context:</span>
+<span class="sd">        - PublisherForm</span>
+<span class="sd">        - Articles linked to the publisher</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">publisher</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Publisher</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">publisher</span><span class="o">.</span><span class="n">owner</span> <span class="o">!=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">:</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;You are not authorized to edit this publisher. Can only edit a publishing house under your name!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;home&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">PublisherForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">instance</span><span class="o">=</span><span class="n">publisher</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">form</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Publisher updated successfully.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;home&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">PublisherForm</span><span class="p">(</span><span class="n">instance</span><span class="o">=</span><span class="n">publisher</span><span class="p">)</span>
+
+    <span class="n">publisher_articles</span> <span class="o">=</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">publisher</span><span class="o">=</span><span class="n">publisher</span><span class="p">,</span> <span class="n">is_deleted</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span>
+        <span class="s2">&quot;publisher/edit_publisher.html&quot;</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;form&quot;</span><span class="p">:</span> <span class="n">form</span><span class="p">,</span>
+            <span class="s2">&quot;publisher&quot;</span><span class="p">:</span> <span class="n">publisher</span><span class="p">,</span>
+            <span class="s2">&quot;articles&quot;</span><span class="p">:</span> <span class="n">publisher_articles</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="delete_publisher">
+<a class="viewcode-back" href="../../../publisher_dashboard_views.html#core.views.publisher_dashboard.delete_publisher">[docs]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">delete_publisher</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">pk</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Soft-deletes a publisher.</span>
+
+<span class="sd">    Access:</span>
+<span class="sd">        - Only the owner of the publisher.</span>
+
+<span class="sd">    Redirects:</span>
+<span class="sd">        - To home after deletion or access denial.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pk (int): Primary key of the publisher to delete.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">publisher</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Publisher</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span> <span class="o">==</span> <span class="n">publisher</span><span class="o">.</span><span class="n">owner</span><span class="p">:</span>
+        <span class="n">publisher</span><span class="o">.</span><span class="n">is_deleted</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">publisher</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Publisher deleted successfully.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;You are not authorized to delete this publisher.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;home&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Molemo N Khethwa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
