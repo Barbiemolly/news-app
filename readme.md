@@ -288,7 +288,7 @@ news-app/
 ### 🔐 Important: Set Your Own MariaDB Password
 For security and compatibility:
 
-Replace all occurrences of "password" with your own secure password.
+Replace all occurrences of "yourpassword" with your own secure password.
 
 This applies to both:
 
