@@ -6,7 +6,7 @@ A fully functional role-based news publishing and moderation platform built with
 ---
 
 ## 📁 Project Structure
-News Application/
+news-app/
 ├── news_portal/ # Django project folder
 │ ├── news_portal/ # Django project settings
 │ │ ├── init.py
@@ -36,7 +36,11 @@ News Application/
 │ │ ├── admin.py
 │ │ ├── urls.py
 │ │ └── apps.py
-│
+| | 
+| ├──Dockerfile
+| ├──.dockerignore
+| ├──docker-compose.yaml
+| └── Docs/ _build/html...
 ├── planning/ # Contains diagrams and planning docs
 │ ├── architecture_digram.drawio
 │ ├── class_structure.png
@@ -182,7 +186,187 @@ python manage.py runserver
 Visit: http://localhost:8000
 
 ---
+## 📚 Sphinx Documentation Setup (For Developers)
+This section provides setup and usage instructions for the Sphinx-based documentation system used in this project.
+---
 
+#### 🧱 Prerequisites
+Ensure you have the following installed:
+- Python environment (activate your virtualenv)
+- Django properly configured
+- Sphinx and the ReadTheDocs theme installed:
+
+```bash
+    pip install sphinx sphinx-rtd-theme
+```
+---
+
+### ⚙️ Configuration
+Create a file named conf.py under the /docs directory with the following at the top:
+
+    import os
+    import sys
+    import django
+
+    sys.path.insert(0, os.path.abspath('..'))
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'news_portal.settings'  # Replace if different
+    django.setup()
+
+📌 This enables autodoc to load your Django models, views, and serializers.
+
+---
+
+### 🏗️ Generating Documentation
+
+1. Navigate to the /docs directory:
+```bash
+   cd docs
+```
+
+2. Run the autodoc command to generate .rst files:
+
+       sphinx-apidoc -o . ../core
+
+3. Build HTML docs:
+
+       make html
+
+4. Output will be in:
+```bash
+       docs/_build/html/
+```
+5. To view the docs, open the file:
+```ash
+       docs/_build/html/index.html
+```
+---
+
+🚀 Git & Deployment Notes
+To ensure Sphinx HTML build is pushed:
+- Add this to .gitignore to include only Sphinx output:
+```bash
+      # Ignore all build folders...
+      build/
+
+      # ...but include this Sphinx folder
+      !docs/_build/html/
+```
+- On Windows/PowerShell, run the following inside /docs/_build/html:
+```bash
+      echo "" > .nojekyll
+```
+This ensures GitHub Pages doesn’t ignore folders starting with underscores.
+
+
+---
+##🐳 Docker Setup
+
+This project supports containerized development using Docker and Docker Compose. It includes:
+
+- Django (Python 3.11)
+- MariaDB 10.6+
+- Volume mapping for live code editing
+- Optional SQLite fallback for lightweight testing
+
+### ⚙️ Requirements
+
+- Docker Desktop or Play with Docker (labs.play-with-docker.com)
+- A GitHub account (if testing from a public repo)
+
+### 📁 Project Structure
+
+news-app/
+├── news_portal/
+│   ├── Dockerfile
+│   ├── docker-compose.yaml
+│   ├── manage.py
+│   ├── core/
+│   └── ...
+
+> `manage.py` and `docker-compose.yaml` must be in the same directory (`news_portal/`).
+
+### 🔐 Important: Set Your Own MariaDB Password
+For security and compatibility:
+
+Replace all occurrences of "password" with your own secure password.
+
+This applies to both:
+
+  1. In docker-compose.yaml:
+    environment:
+      MYSQL_ROOT_PASSWORD: your_secure_password
+      MYSQL_DATABASE: news_db
+  Also update under web.environment:
+    - DB_PASSWORD=your_secure_password
+
+### 🚀 Quick Start (Local)
+
+Clone and run the project locally with:
+
+git clone https://github.com/your-username/your-repo.git
+cd your-repo/news_portal
+
+docker-compose up --build
+
+Then open: http://localhost:8000
+
+To create an admin user:
+
+docker-compose exec web python manage.py createsuperuser
+
+### 🌐 Quick Start (Play with Docker)
+
+1. Open: https://labs.play-with-docker.com/
+2. Create a new session and select a node.
+3. Run:
+
+   git clone https://github.com/your-username/your-repo.git
+   cd your-repo/news_portal
+   docker-compose up --build
+
+4. Wait for the server to start (look for “Starting development server at http://0.0.0.0:8000/”)
+5. Click **Expose Port** and enter `8000`
+6. Visit the generated URL in your browser
+
+### 🔐 Creating the Superuser
+
+docker-compose exec web python manage.py createsuperuser
+
+#### 🧠 Switching Between MariaDB and SQLite
+
+This project uses an environment variable to toggle the database engine:
+
+Mode     | IN_DOCKER Value | Behavior
+---------|------------------|---------
+Docker   | 0                | Uses MariaDB
+Fallback | 1                | Uses SQLite
+
+This is handled inside settings.py:
+
+IN_DOCKER = os.environ.get("IN_DOCKER") == "1"
+
+if IN_DOCKER:
+    # Use SQLite
+else:
+    # Use MariaDB
+
+### 📄 Useful Commands
+
+docker-compose up -d        # Start in background
+docker-compose down         # Stop all services
+docker-compose exec web bash   # Shell into Django container
+docker-compose exec web python manage.py migrate
+docker-compose exec web python manage.py createsuperuser
+
+### 🧼 Clean Build
+
+If anything breaks or changes:
+
+docker-compose down -v
+docker-compose build --no-cache
+docker-compose up
+
+---
 ## 🔧 Tech Stack
 
 Python 3.11+
