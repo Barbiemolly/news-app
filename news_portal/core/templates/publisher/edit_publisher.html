@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Edit Publisher: {{ publisher.name }}</h2>
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+
+<form method="post" class="card p-4 mb-4 shadow-sm">
+  {% csrf_token %}
+  <div class="mb-3">
+    {{ form.name.label_tag }}
+    {{ form.name }}
+  </div>
+  <div class="mb-3">
+    {{ form.editors.label_tag }}
+    {{ form.editors }}
+  </div>
+  <div class="mb-3">
+    {{ form.journalists.label_tag }}
+    {{ form.journalists }}
+  </div>
+  <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+
+<h4>Articles Published Under This Publisher</h4>
+<ul class="list-group mb-4">
+  {% for article in publisher.articles.all %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      {{ article.title }}
+      <form method="post" action="{% url 'delete_article' article.pk %}" onsubmit="return confirm('Are you sure you want to delete this article?');">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+      </form>
+    </li>
+  {% empty %}
+    <li class="list-group-item">No articles found under this publisher.</li>
+  {% endfor %}
+</ul>
+
+<form method="post" action="{% url 'delete_publisher' publisher.pk %}" onsubmit="return confirm('Are you sure you want to delete this publisher?');">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-danger">Delete Publisher</button>
+</form>
+
+{% endblock %}

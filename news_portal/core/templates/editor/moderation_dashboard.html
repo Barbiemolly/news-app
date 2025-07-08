@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Pending Articles</h2>
+<ul class="list-group mb-5">
+  {% for article in articles %}
+    <li class="list-group-item">
+      <strong>{{ article.title }}</strong> by {{ article.author.username }}
+      <a href="{% url 'approve_article' article.pk %}" class="btn btn-sm btn-success ms-2">Approve</a>
+      <a href="{% url 'reject_article' article.pk %}" class="btn btn-sm btn-danger ms-2">Reject</a>
+      <form method="POST" action="{% url 'delete_article' article.pk %}" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this article?');">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-outline-danger ms-2">Delete</button>
+      </form>
+    </li>
+  {% empty %}
+    <li class="list-group-item">No pending articles.</li>
+  {% endfor %}
+</ul>
+
+<h2>Pending Newsletters</h2>
+<ul class="list-group">
+  {% for newsletter in newsletters %}
+    <li class="list-group-item">
+      <strong>{{ newsletter.title }}</strong> by {{ newsletter.author.username }}
+      <a href="{% url 'approve_newsletter' newsletter.pk %}" class="btn btn-sm btn-success ms-2">Approve</a>
+      <a href="{% url 'reject_newsletter' newsletter.pk %}" class="btn btn-sm btn-danger ms-2">Reject</a>
+    </li>
+  {% empty %}
+    <li class="list-group-item">No pending newsletters.</li>
+  {% endfor %}
+</ul>
+
+{% endblock %}

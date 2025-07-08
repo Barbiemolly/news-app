@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Edit Rejected Article</h2>
+
+  <form method="POST" novalidate>
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label">Title</label>
+      {{ form.title|add_class:"form-control" }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Content</label>
+      {{ form.content|add_class:"form-control" }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Publisher (optional)</label>
+      {{ form.publisher|add_class:"form-control" }}
+    </div>
+    <div class="d-flex justify-content-between">
+      <button type="submit" class="btn btn-warning">Resubmit</button>
+
+      <!-- Delete button -->
+      <form method="POST" action="{% url 'delete_article' article.pk %}" onsubmit="return confirm('Are you sure you want to delete this article?');">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-danger">Delete</button>
+      </form>
+    </div>
+  </form>
+</div>
+{% endblock %}

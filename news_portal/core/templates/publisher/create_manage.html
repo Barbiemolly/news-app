@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">Create or Manage Publishers</h2>
+
+<form method="post" class="card p-4 shadow-sm mb-5">
+  {% csrf_token %}
+  <div class="mb-3">{{ form.name.label_tag }} {{ form.name }}</div>
+  <div class="mb-3">{{ form.owner.label_tag }} {{ form.owner }}</div>
+  <div class="mb-3">{{ form.editors.label_tag }} {{ form.editors }}</div>
+  <div class="mb-3">{{ form.journalists.label_tag }} {{ form.journalists }}</div>
+  <button type="submit" class="btn btn-success">Save Publisher</button>
+</form>
+
+<h4>Existing Publishers</h4>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Owner</th>
+      <th>Editors</th>
+      <th>Journalists</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for pub in publishers %}
+    <tr>
+      <td>{{ pub.name }}</td>
+      <td>{{ pub.owner.username }}</td>
+      <td>
+        {% for e in pub.editors.all %}
+          {{ e.username }}{% if not forloop.last %}, {% endif %}
+        {% empty %}—{% endfor %}
+      </td>
+      <td>
+        {% for j in pub.journalists.all %}
+          {{ j.username }}{% if not forloop.last %}, {% endif %}
+        {% empty %}—{% endfor %}
+      </td>
+      <td><a class="btn btn-success mb-3"
+         href="{% url 'edit_publisher' pub.pk %}">Edit Publisher</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

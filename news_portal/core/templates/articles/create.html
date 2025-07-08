@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Submit New Article</h2>
+  <form method="POST" novalidate>
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label">Title</label>
+      {{ form.title|add_class:"form-control" }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Content</label>
+      {{ form.content|add_class:"form-control" }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Publisher (optional)</label>
+      {{ form.publisher|add_class:"form-control" }}
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+{% endblock %}

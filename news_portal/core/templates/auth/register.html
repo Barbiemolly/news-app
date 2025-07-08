@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load form_tags %}
+{% block content %}
+
+<div class="row justify-content-center mt-5">
+  <div class="col-md-8">
+    <div class="card shadow-sm rounded-3">
+      <div class="card-header bg-dark text-white text-center">
+        <h4>Create Your Reader Account</h4>
+      </div>
+      <div class="card-body">
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <!-- Username -->
+          <div class="mb-3">
+            <label for="id_username" class="form-label">Username</label>
+            {{ form.username|add_class:"form-control" }}
+          </div>
+
+          <!-- Email -->
+          <div class="mb-3">
+            <label for="id_email" class="form-label">Email address</label>
+            {{ form.email|add_class:"form-control" }}
+          </div>
+
+          <!-- Role  -->
+          <div class="mb-3">
+            <label class="form-label">Account Type</label>
+            {{ form.role|add_class:"form-control" }}
+          </div>
+
+          <!-- Password1 -->
+          <div class="mb-3">
+            <label for="id_password1" class="form-label">Password</label>
+            {{ form.password1|add_class:"form-control" }}
+          </div>
+
+          <!-- Password2 -->
+          <div class="mb-3">
+            <label for="id_password2" class="form-label">Confirm Password</label>
+            {{ form.password2|add_class:"form-control" }}
+          </div>
+          
+          {% if form.errors %}
+            <div class="alert alert-danger">
+              <ul class="mb-0">
+                {% for field in form %}
+                  {% for error in field.errors %}
+                    <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                  {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                  <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+          <button type="submit" class="btn btn-success w-100">Register</button>
+        </form>
+
+        <hr>
+        <div class="text-center">
+          <p class="mb-0">Already have an account?</p>
+          <a href="{% url 'login' %}" class="btn btn-outline-primary btn-sm mt-2">Login</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

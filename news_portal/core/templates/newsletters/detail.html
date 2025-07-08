@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>{{ newsletter.title }}</h2>
+<p><strong>Author:</strong> {{ newsletter.author.username }}</p>
+<p>{{ newsletter.content }}</p>
+<p><strong>Created:</strong> {{ newsletter.created_at|date:"Y-m-d" }}</p>
+{% endblock %}

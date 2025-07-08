@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Your Bookmarked Articles</h3>
+<ul>
+  {% for article in bookmarks %}
+    <li><a href="{% url 'article_detail' article.pk %}">{{ article.title }}</a></li>
+  {% empty %}
+    <li>You have no bookmarks.</li>
+  {% endfor %}
+</ul>
+
+<h4>Following:</h4>
+<h5>Publishers</h5>
+<ul>
+  {% for pub in subs_pubs %}
+    <li>{{ pub.name }}</li>
+  {% empty %}
+    <li>None</li>
+  {% endfor %}
+</ul>
+
+<h5>Journalists</h5>
+<ul>
+  {% for j in subs_journos %}
+    <li>{{ j.username }}</li>
+  {% empty %}
+    <li>None</li>
+  {% endfor %}
+</ul>
+{% endblock %}

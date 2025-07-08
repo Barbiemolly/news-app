@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>{{ article.title }}</h2>
+<p>{{ article.content }}</p>
+<p><strong>Author:</strong> {{ article.author.username }}</p>
+<p><strong>Status:</strong> {{ article.status }}</p>
+<p><strong>Published under:</strong> {% if article.publisher %}{{ article.publisher.name }}{% else %}<em>Independent</em>{% endif %}</p>
+
+{% if user == article.author or user.role == 'editor' %}
+  <a href="{% url 'edit_article' article.pk %}" class="btn btn-warning">Edit</a>
+  <form method="POST" action="{% url 'delete_article' article.pk %}" onsubmit="return confirm('Delete this article?');" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Delete</button>
+  </form>
+{% endif %}
+
+{% endblock %}

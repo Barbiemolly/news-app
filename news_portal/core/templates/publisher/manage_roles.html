@@ -1,0 +1,106 @@
+<!-- FIXED TEMPLATE: manage_roles.html -->
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Manage Publisher Roles</h2>
+
+<a href="{% url 'create_publisher' %}" class="btn btn-success mb-3">+ New Publisher</a>
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+
+<div class="row mb-5">
+  <div class="col-md-6">
+    <div class="card border-success mb-3">
+      <div class="card-header bg-success text-white">Paired Editors</div>
+      <ul class="list-group list-group-flush">
+        {% for editor in paired_editors %}
+          <li class="list-group-item">
+            <strong>{{ editor.username }}</strong><br>
+            {% with editor.editing_publishers.first as ep %}
+              {% if ep %}
+                <small class="text-muted">Publisher: {{ ep.name }}</small>
+              {% else %}
+                <small class="text-muted">Independent</small>
+              {% endif %}
+            {% endwith %}
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted">No editors paired yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="card border-primary mb-3">
+      <div class="card-header bg-primary text-white">Unpaired Editors</div>
+      <ul class="list-group list-group-flush">
+        {% for editor in unpaired_editors %}
+          <li class="list-group-item">
+            <strong>{{ editor.username }}</strong>
+            <small class="text-muted">(Independent)</small>
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted">All editors are paired.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card border-success mb-3">
+      <div class="card-header bg-success text-white">Paired Journalists</div>
+      <ul class="list-group list-group-flush">
+        {% for journalist in paired_journalists %}
+          <li class="list-group-item">
+            <strong>{{ journalist.username }}</strong><br>
+            {% with journalist.writing_publishers.first as jp %}
+              {% if jp %}
+                <small class="text-muted">Publisher: {{ jp.name }}</small>
+              {% else %}
+                <small class="text-muted">Independent</small>
+              {% endif %}
+            {% endwith %}
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted">No journalists paired yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="card border-primary mb-3">
+      <div class="card-header bg-primary text-white">Unpaired Journalists</div>
+      <ul class="list-group list-group-flush">
+        {% for journalist in unpaired_journalists %}
+          <li class="list-group-item">
+            <strong>{{ journalist.username }}</strong>
+            <small class="text-muted">(Independent)</small>
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted">All journalists are paired.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-4 shadow-sm">
+  <div class="card-header bg-dark text-white">
+    Assign Editors and Journalists
+  </div>
+  <div class="card-body">
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <div class="mb-3">
+        <h5>Assign Editors</h5>
+        {{ editor_form.editors }}
+      </div>
+      <div class="mb-3">
+        <h5>Assign Journalists</h5>
+        {{ journalist_form.journalists }}
+      </div>
+      <button type="submit" class="btn btn-success w-100">Save Changes</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

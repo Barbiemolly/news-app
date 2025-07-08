@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Newsletters</h2>
+
+{% if user.role == 'journalist' %}
+  <a href="{% url 'create_newsletter' %}" class="btn btn-success mb-3">+ New Newsletter</a>
+{% endif %}
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Author</th>
+      <th>Created</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for newsletter in newsletters %}
+      <tr>
+        <td><a href="{% url 'newsletter_detail' newsletter.pk %}">{{ newsletter.title }}</a></td>
+        <td>{{ newsletter.author.username }}</td>
+        <td>{{ newsletter.created_at|date:"Y-m-d" }}</td>
+        <td>
+          <a href="{% url 'edit_newsletter' newsletter.pk %}" class="btn btn-sm btn-info">Edit</a>
+          <form method="POST" action="{% url 'delete_newsletter' newsletter.pk %}" style="display:inline;" onsubmit="return confirm('Delete newsletter?');">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="4">No newsletters found.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

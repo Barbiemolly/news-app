@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Manage Subscriptions</h2>
+
+<form method="post">
+  {% csrf_token %}
+
+  <div class="mb-4">
+    <h4>Publishers</h4>
+    {% for publisher in publishers %}
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="publishers" value="{{ publisher.id }}"
+               {% if publisher in selected_publishers %}checked{% endif %}>
+        <label class="form-check-label">{{ publisher.name }}</label>
+      </div>
+    {% empty %}
+      <p>No publishers available.</p>
+    {% endfor %}
+  </div>
+
+  <div class="mb-4">
+    <h4>Journalists</h4>
+    {% for journalist in journalists %}
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="journalists" value="{{ journalist.id }}"
+               {% if journalist in selected_journalists %}checked{% endif %}>
+        <label class="form-check-label">{{ journalist.username }}</label>
+      </div>
+    {% empty %}
+      <p>No journalists available.</p>
+    {% endfor %}
+  </div>
+
+  <button type="submit" class="btn btn-primary">Save Subscriptions</button>
+</form>
+
+<hr>
+<h4>Your Current Subscriptions</h4>
+
+<h5>Publishers</h5>
+<ul class="list-group mb-3">
+  {% for publisher in selected_publishers %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      {{ publisher.name }}
+      <a href="{% url 'unsubscribe_publisher' publisher.pk %}" class="btn btn-sm btn-outline-danger">Unsubscribe</a>
+    </li>
+  {% empty %}
+    <li class="list-group-item">You're not subscribed to any publishers.</li>
+  {% endfor %}
+</ul>
+
+<h5>Journalists</h5>
+<ul class="list-group">
+  {% for journalist in selected_journalists %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      {{ journalist.username }}
+      <a href="{% url 'unsubscribe_journalist' journalist.pk %}" class="btn btn-sm btn-outline-danger">Unsubscribe</a>
+    </li>
+  {% empty %}
+    <li class="list-group-item">You're not following any journalists.</li>
+  {% endfor %}
+</ul>
+
+{% endblock %}
