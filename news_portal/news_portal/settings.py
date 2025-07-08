@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -104,10 +105,10 @@ WSGI_APPLICATION = "news_portal.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "news_db",
-        "USER": "root",
-        "PASSWORD": "mole@2018",
-        "HOST": "localhost",  # Or IP if remote
+        "HOST": os.environ.get("DB_HOST", "localhost"),
+        "NAME": os.environ.get("DB_NAME", "news_db"),
+        "USER": os.environ.get("DB_USER", "root"),
+        "PASSWORD": os.environ.get("DB_PASSWORD", "mole@2018"),
         "PORT": "3306",  # Default MySQL/MariaDB port
         "OPTIONS": {
             "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
