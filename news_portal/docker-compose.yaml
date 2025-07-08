@@ -3,12 +3,13 @@ version: "3.9"
 services:
   web:
     build:
-      context: .            # Builds from current dir: repo/news_portal
+      context: .
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
     volumes:
-      - .:/app              # Mounts repo/news_portal into /app
+      - .:/app
+    working_dir: /app
     environment:
       - IN_DOCKER=0
       - DB_NAME=news_db
@@ -16,7 +17,6 @@ services:
       - DB_PASSWORD=mole@2018
       - DB_HOST=db
       - DB_PORT=3306
-    working_dir: /app       # Ensures Python runs in /app where manage.py is
     command: >
       sh -c "
       python manage.py migrate &&
@@ -40,8 +40,6 @@ services:
       test: ["CMD", "mysqladmin", "-uroot", "-pmole@2018", "ping", "-h", "localhost"]
       interval: 10s
       timeout: 5s
-      retries: 5
-
       retries: 5
 
 volumes:
