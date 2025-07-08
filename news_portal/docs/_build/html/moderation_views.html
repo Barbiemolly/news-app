@@ -1,0 +1,189 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Moderation Views &mdash; News portal 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Publisher Dashboard Views" href="publisher_dashboard_views.html" />
+    <link rel="prev" title="Newsletter Views" href="newsletter_views.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            News portal
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="core.models.html">core.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="article_serializer.html">Article Serializer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="article_views.html">Article Views</a></li>
+<li class="toctree-l1"><a class="reference internal" href="newsletter_views.html">Newsletter Views</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Moderation Views</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#core.views.moderation.moderation_dashboard"><code class="docutils literal notranslate"><span class="pre">moderation_dashboard()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core.views.moderation.approve_newsletter"><code class="docutils literal notranslate"><span class="pre">approve_newsletter()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core.views.moderation.reject_newsletter"><code class="docutils literal notranslate"><span class="pre">reject_newsletter()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="publisher_dashboard_views.html">Publisher Dashboard Views</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">News portal</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Moderation Views</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/moderation_views.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-core.views.moderation">
+<span id="moderation-views"></span><h1>Moderation Views<a class="headerlink" href="#module-core.views.moderation" title="Link to this heading"></a></h1>
+<p>Moderation views for editors.</p>
+<p>Allows editors to review and take action on submitted articles and newsletters.</p>
+<dl class="simple">
+<dt>Functions:</dt><dd><ul class="simple">
+<li><p>moderation_dashboard: Lists all pending items for editor review.</p></li>
+<li><p>approve_newsletter: Marks a newsletter as approved.</p></li>
+<li><p>reject_newsletter: Rejects a newsletter with a reason.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="core.views.moderation.moderation_dashboard">
+<span class="sig-prename descclassname"><span class="pre">core.views.moderation.</span></span><span class="sig-name descname"><span class="pre">moderation_dashboard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/views/moderation.html#moderation_dashboard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.moderation.moderation_dashboard" title="Link to this definition"></a></dt>
+<dd><p>Displays the moderation dashboard for editors.</p>
+<p>Shows a list of all submitted (pending) articles and newsletters.
+Access:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Only users with role ‘editor’.</p></li>
+</ul>
+</div></blockquote>
+<dl class="simple">
+<dt>Template:</dt><dd><ul class="simple">
+<li><p>editor/moderation_dashboard.html</p></li>
+</ul>
+</dd>
+<dt>Context:</dt><dd><ul class="simple">
+<li><p>articles: list of pending Article instances.</p></li>
+<li><p>newsletters: list of pending Newsletter instances.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.views.moderation.approve_newsletter">
+<span class="sig-prename descclassname"><span class="pre">core.views.moderation.</span></span><span class="sig-name descname"><span class="pre">approve_newsletter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pk</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/views/moderation.html#approve_newsletter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.moderation.approve_newsletter" title="Link to this definition"></a></dt>
+<dd><p>Approves a newsletter.</p>
+<p>Sets the status to “approved” and redirects to the moderation dashboard.</p>
+<dl class="simple">
+<dt>Access:</dt><dd><ul class="simple">
+<li><p>Only users with role ‘editor’.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pk</strong> (<em>int</em>) – Primary key of the newsletter to approve.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="core.views.moderation.reject_newsletter">
+<span class="sig-prename descclassname"><span class="pre">core.views.moderation.</span></span><span class="sig-name descname"><span class="pre">reject_newsletter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pk</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/views/moderation.html#reject_newsletter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.moderation.reject_newsletter" title="Link to this definition"></a></dt>
+<dd><p>Rejects a newsletter and optionally records a reason.</p>
+<p>Sets the status to “rejected” and stores the rejection reason.</p>
+<dl class="simple">
+<dt>Access:</dt><dd><ul class="simple">
+<li><p>Only users with role ‘editor’.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pk</strong> (<em>int</em>) – Primary key of the newsletter to reject.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="newsletter_views.html" class="btn btn-neutral float-left" title="Newsletter Views" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="publisher_dashboard_views.html" class="btn btn-neutral float-right" title="Publisher Dashboard Views" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Molemo N Khethwa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
