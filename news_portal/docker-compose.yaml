@@ -5,30 +5,41 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: python manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
-    depends_on:
-      - db
     volumes:
       - .:/app
     environment:
-      - DJANGO_SETTINGS_MODULE=news_portal.settings
-      - DB_HOST=db
+      - IN_DOCKER=1                # Enable SQLite mode inside container by default
       - DB_NAME=news_db
       - DB_USER=root
       - DB_PASSWORD=mole@2018
+      - DB_HOST=db
+      - DB_PORT=3306
+    command: >
+      sh -c "
+      python manage.py migrate &&
+      python manage.py runserver 0.0.0.0:8000
+      "
+    depends_on:
+      db:
+        condition: service_healthy
 
   db:
-    image: mariadb:10.6
+    image: mariadb:10.6.22-alpine
     restart: always
     environment:
-      MYSQL_DATABASE: news_db
       MYSQL_ROOT_PASSWORD: mole@2018
+      MYSQL_DATABASE: news_db
     ports:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   db_data:
