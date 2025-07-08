@@ -5,7 +5,6 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# Install system dependencies required for mysqlclient, Pillow, etc.
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
@@ -18,15 +17,10 @@ RUN apt-get update && apt-get install -y \
     curl \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Copy and install Python dependencies
 COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Copy project files
 COPY . .
-
-# Switch to the Django project directory
-WORKDIR /app/news_portal
 
 EXPOSE 8000
 
